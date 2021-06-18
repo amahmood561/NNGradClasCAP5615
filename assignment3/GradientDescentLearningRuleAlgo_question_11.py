@@ -84,8 +84,8 @@ class gradient_descent_learning_rule_question_11:
 
     def load_data_for_init(self):
         # load data and train and set feats caluclate learning rate
-        self.class1 = pd.read_csv("class1.txt")
-        self.class2 = pd.read_csv("class2.txt")
+        self.class1 = pd.read_csv("../Class1.txt")
+        self.class2 = pd.read_csv("../Class2.txt")
         self.class_df_1 = self.class1.append(self.class2)
         self.class1.insert(self.class1.shape[1], 'label', 1)
         self.class_1_sample_df = self.class1.sample(frac=.8)

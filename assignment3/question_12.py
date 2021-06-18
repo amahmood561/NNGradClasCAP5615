@@ -12,7 +12,7 @@ from math import log2
 class question_12_review100:
     def __init__(self):
         self.count_vectorizer = CountVectorizer()
-        self.imported_review = pd.read_csv("review100.csv")
+        self.imported_review = pd.read_csv("../review100.csv")
         self.print_sentiment_review_movie_remove_dead()
         self.vectorize_data()
         self.parsee_feat_names_from_vectorizedd()
