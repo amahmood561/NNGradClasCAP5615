@@ -1,0 +1,970 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Final Exam}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    Question 1 \includegraphics{attachment:image.png}
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:image.png}
+\caption{image.png}
+\end{figure}
+
+    Input neurons i1, i2, i3
+
+Input weights w1, w2, w3
+
+Output neuron Oi
+
+Working The basic unit of computation in a neural network is the neuron,
+often called a node or unit. It receives input from some other nodes, or
+from an external source and computes an output. Each input has an
+associated weight (w), which is assigned on the basis of its relative
+importance to other inputs.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Input Nodes -- The Input nodes provide information from the outside
+  world to the network and are together referred to as the ``Input
+  Layer''. No computation is performed in any of the Input nodes -- they
+  just pass on the information to the hidden nodes.
+\item
+  Hidden Nodes -- The Hidden nodes have no direct connection with the
+  outside world (hence the name ``hidden''). They perform computations
+  and transfer information from the input nodes to the output nodes. A
+  collection of hidden nodes forms a ``Hidden Layer''. While a
+  feedforward network will only have a single input layer and a single
+  output layer, it can have zero or multiple Hidden Layers.
+\item
+  Output Nodes -- The Output nodes are collectively referred to as the
+  ``Output Layer'' and are responsible for computations and transferring
+  information from the network to the outside world.
+\item
+  Bias Nodes - The bias node in a neural network is a node that is
+  always `on'. That is, its value is set to 1 without regard for the
+  data in a given pattern. It is analogous to the intercept in a
+  regression model, and serves the same function.
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:image-2.png}
+\caption{image-2.png}
+\end{figure}
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:image.png}
+\caption{image.png}
+\end{figure}
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:image-2.png}
+\caption{image-2.png}
+\end{figure}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{from} \PY{n+nn}{math} \PY{k+kn}{import} \PY{n}{log2}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{from} \PY{n+nn}{numpy}\PY{n+nn}{.}\PY{n+nn}{linalg} \PY{k+kn}{import} \PY{n}{norm}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{107}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{calculate\PYZus{}entropy}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{,} \PY{n}{column}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{sum} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{current\PYZus{}unique} \PY{o}{=} \PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{current\PYZus{}unique}\PY{p}{:}
+        \PY{n}{req1} \PY{o}{=} \PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{)}
+        \PY{n}{req2} \PY{o}{=} \PY{n}{log2}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb}{sum}\PY{o}{+}\PY{o}{=} \PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{req1}\PY{p}{)}\PY{o}{*}\PY{n}{req2}
+    \PY{k}{return} \PY{n+nb}{sum}
+
+\PY{k}{def} \PY{n+nf}{calculate\PYZus{}cond\PYZus{}entropy}\PY{p}{(}\PY{n}{current\PYZus{}column}\PY{p}{,}\PY{n}{data\PYZus{}frame}\PY{p}{,}\PY{n}{select\PYZus{}col}\PY{p}{)}\PY{p}{:}
+    \PY{n}{summed} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{collected\PYZus{}entropies} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+    \PY{n}{unique\PYZus{}vals} \PY{o}{=} \PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{current\PYZus{}column}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{unique\PYZus{}vals}\PY{p}{:}
+            \PY{n}{val1} \PY{o}{=} \PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{current\PYZus{}column}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{)}\PY{p}{)}
+            \PY{n}{val2} \PY{o}{=} \PY{n}{calculate\PYZus{}entropy}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{current\PYZus{}column}\PY{p}{]}\PY{o}{==}\PY{n}{i}\PY{p}{]}\PY{p}{,} 
+                                     \PY{n}{select\PYZus{}col}\PY{p}{)}
+            \PY{n}{summed}\PY{o}{+}\PY{o}{=} \PY{n}{val1} \PY{o}{*} \PY{n}{val2}
+            \PY{n}{val3} \PY{o}{=} \PY{p}{[}\PY{n}{calculate\PYZus{}entropy}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{current\PYZus{}column}\PY{p}{]}\PY{o}{==}\PY{n}{i}\PY{p}{]}\PY{p}{,}
+                                      \PY{n}{select\PYZus{}col}\PY{p}{)}\PY{p}{]}
+            \PY{n}{collected\PYZus{}entropies}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{val3}
+    \PY{k}{return} \PY{p}{[}\PY{n}{summed}\PY{p}{,} \PY{n}{collected\PYZus{}entropies}\PY{p}{]}
+
+\PY{k}{def} \PY{n+nf}{calculate\PYZus{}information\PYZus{}gain}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{,} \PY{n}{current\PYZus{}column}\PY{p}{,} \PY{n}{select\PYZus{}col}\PY{p}{)}\PY{p}{:}
+    \PY{n}{req1} \PY{o}{=} \PY{n}{calculate\PYZus{}entropy}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{,} \PY{n}{select\PYZus{}col}\PY{p}{)}
+    \PY{n}{req2} \PY{o}{=} \PY{n}{calculate\PYZus{}cond\PYZus{}entropy}\PY{p}{(}\PY{n}{current\PYZus{}column}\PY{p}{,}\PY{n}{data\PYZus{}frame}\PY{p}{,}\PY{n}{select\PYZus{}col}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{n}{req3} \PY{o}{=} \PY{n}{calculate\PYZus{}cond\PYZus{}entropy}\PY{p}{(}\PY{n}{current\PYZus{}column}\PY{p}{,}\PY{n}{data\PYZus{}frame}\PY{p}{,}\PY{n}{select\PYZus{}col}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{n}{req4} \PY{o}{=} \PY{n}{calculate\PYZus{}cond\PYZus{}entropy}\PY{p}{(}\PY{n}{current\PYZus{}column}\PY{p}{,}\PY{n}{data\PYZus{}frame}\PY{p}{,}\PY{n}{select\PYZus{}col}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+    \PY{k}{return} \PY{n}{req1} \PY{o}{\PYZhy{}} \PY{n}{req2}\PY{p}{,} \PY{n}{req3}\PY{p}{,}\PY{n}{req4}
+
+\PY{k}{def} \PY{n+nf}{gini\PYZus{}calc}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{,} \PY{n}{col}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{sum} \PY{o}{=}\PY{l+m+mi}{0}
+    \PY{n}{unique\PYZus{}values} \PY{o}{=} \PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{unique\PYZus{}values}\PY{p}{:}
+        \PY{n}{req1} \PY{o}{=} \PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}frame}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb}{sum}\PY{o}{+}\PY{o}{=} \PY{n}{req1}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}
+    \PY{k}{return} \PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n+nb}{sum}
+
+\PY{k}{def} \PY{n+nf}{gini\PYZus{}calc\PYZus{}}\PY{p}{(}\PY{n}{df}\PY{p}{,} \PY{n}{col}\PY{p}{,} \PY{n}{current\PYZus{}col}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{sum} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{unique\PYZus{}values} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{unique\PYZus{}values}\PY{p}{:}
+        \PY{n}{req1} \PY{o}{=}  \PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{p}{)}
+        \PY{n}{req2} \PY{o}{=} \PY{n}{gini\PYZus{}calc}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{==}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{current\PYZus{}col}\PY{p}{)}
+        \PY{n+nb}{sum}\PY{o}{+}\PY{o}{=}\PY{n}{req1}\PY{o}{*}\PY{n}{req2}
+    \PY{k}{return} \PY{n+nb}{sum}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{108}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{imported\PYZus{}values} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}excel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{hw.xlsx}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{imported\PYZus{}values}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{108}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    Outlook Temperature Humidity    Wind        Day Class
+0     Sunny         Hot     High    Weak     Monday    No
+1     Sunny        Cool     High  Strong    Tuesday    No
+2  Overcast        Cool   Normal    Weak  Wednesday    No
+3  Overcast         Hot     High    Weak   Thursday   Yes
+4     Sunny        Mild     High    Weak     Friday   Yes
+5      Rain        Cool   Normal    Weak   Saturday   Yes
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{109}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{calculate\PYZus{}entropy}\PY{p}{(}\PY{n}{imported\PYZus{}values}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Class}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{109}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+1.0
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{110}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{calculate\PYZus{}information\PYZus{}gain}\PY{p}{(}\PY{n}{imported\PYZus{}values}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Outlook}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Class}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{110}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(0.20751874963942196,
+ 0.792481250360578,
+ \{'Sunny': [0.9182958340544896], 'Overcast': [1.0], 'Rain': [0.0]\})
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{111}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{gini\PYZus{}calc\PYZus{}}\PY{p}{(}\PY{n}{hw}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Outlook}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Class}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{gini\PYZus{}split}\PY{p}{(}\PY{n}{hw}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Day}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Class}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+0.38888888888888884
+0.0
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{112}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{calculate\PYZus{}information\PYZus{}gain}\PY{p}{(}\PY{n}{hw}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Day}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Class}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{112}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(1.0,
+ 0.0,
+ \{'Monday': [0.0],
+  'Tuesday': [0.0],
+  'Wednesday': [0.0],
+  'Thursday': [0.0],
+  'Friday': [0.0],
+  'Saturday': [0.0]\})
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Output class of the decision tree is the parent class. The entropy of
+the system is nothing but the entropy of parent. In this case, the
+parent is a class variable. Class Variable No 3 data points Yes 3 data
+points
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\item
+  The entropy of the system is 1
+\item
+  H(Y)=E(S)=1(Calculated in question 1)
+\end{enumerate}
+
+If (Outlook=sunny \& Class= YES), probability = 1/3
+
+If (Outlook=sunny \& Class= NO), probability = 2/3
+
+H(Y==Sunny)=-1/3\emph{log(1/3) - -2/3 } log(2/3)=0.91
+
+If (Outlook=OVERCAST \& Class= YES), probability = 1/2
+
+If (Outlook=OVERCAST \& Class= NO), probability = 1/2
+
+H(Y==Overcast)=-1/2\emph{log(1/2) - -1/2 } log(1/2)=1
+
+If (Outlook=RAINY \& Class= YES), probability = 1
+
+If (Outlook=RAINY \& Class= NO), probability = 0
+
+H(Y==Rainy)=-1/1\emph{log(1/1) - -0/1 } log(0/1)=0
+
+Infogain(Outlook)=1-((3/6)\emph{0.91+(2/6)}1+(1/6)\emph{0)
+=1-(0.5}0.91+0.33) = 0.215
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  P(Outlook=sunny): 3/6
+\end{enumerate}
+
+P(Outlook=Overcast): 2/6
+
+P(Outlook=Rainy): 1/6
+
+If (Outlook=sunny \& Class= YES), probability = 1/3
+
+If (Outlook=sunny \& Class= NO), probability = 2/3
+
+Gini index = 1 - ((1/3)2 + (2/3)2) = 0.44
+
+If (Outlook=OVERCAST \& Class= YES), probability = 1/2
+
+If (Outlook=OVERCAST \& Class= NO), probability = 1/2
+
+Gini index = 1 - ((1/2) + 2(1/2)2) = 0.5 If (Outlook=RAINY \& Class=
+YES), probability = 1
+
+If (Outlook=RAINY \& Class= NO), probability = 0
+
+Gini index = 1 - ((1)2 + (0)2) = 0
+
+The weighted sum of the Gini Indices can be calculated as follows: Gini
+Index for Outlook = (3/6)\emph{0.44 + (2/6)}0.5+(1/6)*0 = 0.385
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{3}
+\item
+  The information gain''0'' and Gini index is ''1'' for the `day'
+  attribute because all the instances of `day' attribute are different
+  so there is no dependency
+\item
+  Information gain of day attribute is zero. It implies that day
+  attribute won't provide you with any information about the class
+  attribute Remove entire feature in pre-processing or ignore while
+  preparing decision tree
+\end{enumerate}
+
+    Question 4
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:image.png}
+\caption{image.png}
+\end{figure}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{93}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{gradientDescent\PYZus{}question4}\PY{p}{(}\PY{n}{num\PYZus{}iter}\PY{p}{,} \PY{n}{learning\PYZus{}rate}\PY{p}{,} \PY{n}{w}\PY{p}{)}\PY{p}{:}
+    \PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+                   \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+                   \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}
+                    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+    \PY{n}{passed\PYZus{}in\PYZus{}features} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{values}
+    \PY{n}{labels} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{y}\PY{o}{.}\PY{n}{values}
+    \PY{n}{columns} \PY{o}{=}  \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{round}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Input}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Weight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{v}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Desired}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lr(d(n)\PYZhy{}o(n))}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Delta Wi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Delta W}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{E}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{W(k+1)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+    \PY{n}{results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{columns} \PY{o}{=} \PY{n}{columns}\PY{p}{)}
+    \PY{n}{j}\PY{o}{=}\PY{l+m+mi}{1}
+    \PY{k}{for} \PY{n+nb}{round} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{num\PYZus{}iter}\PY{p}{)}\PY{p}{:}
+        \PY{n}{w\PYZus{}}\PY{o}{=}\PY{n}{w}
+        \PY{n}{accuracy\PYZus{}delta} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{w}\PY{p}{)}\PY{p}{)}
+        \PY{n}{errors} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{passed\PYZus{}in\PYZus{}features}\PY{p}{)}\PY{p}{:}
+            \PY{n}{x} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)}
+            \PY{n}{v}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{w}\PY{p}{,} \PY{n}{x}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}\PY{p}{)} 
+            \PY{n}{output} \PY{o}{=} \PY{n}{learning\PYZus{}rate}\PY{o}{*}\PY{p}{(}\PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{v}\PY{p}{)}
+            \PY{n}{errors}\PY{o}{.}\PY{n}{append}\PY{p}{(} \PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{v}\PY{p}{)}
+            \PY{n}{deltaw} \PY{o}{=} \PY{n}{output}\PY{o}{*}\PY{n}{x}
+            \PY{n}{accuracy\PYZus{}delta} \PY{o}{+}\PY{o}{=} \PY{n}{deltaw}
+            \PY{n}{cols} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{round}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Input}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Weight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{v}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Desired}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lr(d(n)\PYZhy{}o(n))}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Delta Wi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Delta W}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+            \PY{n}{results}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{j}\PY{p}{,}\PY{n}{cols}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{n+nb}{round}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}2.2f}\PY{l+s+s2}{\PYZdq{}}\PY{o}{\PYZpc{}}\PY{k}{k} for k in w\PYZus{}], 
+                                   \PY{n}{v}\PY{p}{,} \PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
+                                   \PY{n}{output}\PY{p}{,} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}2.2f}\PY{l+s+s2}{\PYZdq{}}\PY{o}{\PYZpc{}}\PY{k}{k} for k in deltaw],
+                                   \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}2.2f}\PY{l+s+s2}{\PYZdq{}}\PY{o}{\PYZpc{}}\PY{k}{k} for k in accuracy\PYZus{}delta])]
+            \PY{n}{j}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
+        \PY{n}{w} \PY{o}{=} \PY{n}{w} \PY{o}{+} \PY{n}{accuracy\PYZus{}delta}
+        \PY{n}{equation} \PY{o}{=} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{errors}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{2.0}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{passed\PYZus{}in\PYZus{}features}\PY{p}{)}
+        \PY{n}{results}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{E}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{W(k+1)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{n}{equation}\PY{p}{,} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}2.1f}\PY{l+s+s2}{\PYZdq{}}\PY{o}{\PYZpc{}}\PY{k}{k} for k in w]]  
+    \PY{k}{return} \PY{n}{results}
+
+
+\PY{n}{gradientDescent\PYZus{}question4}\PY{p}{(}\PY{n}{num\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{learning\PYZus{}rate}\PY{o}{=}\PY{l+m+mf}{0.1}\PY{p}{,}   \PY{n}{w} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+c:\textbackslash{}users\textbackslash{}a\_mah\textbackslash{}pycharmprojects\textbackslash{}amahmoo6\_assignment\_1\_cap5615\textbackslash{}venv\textbackslash{}lib\textbackslash{}site-
+packages\textbackslash{}pandas\textbackslash{}core\textbackslash{}internals\textbackslash{}blocks.py:993: VisibleDeprecationWarning:
+Creating an ndarray from ragged nested sequences (which is a list-or-tuple of
+lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If
+you meant to do this, you must specify 'dtype=object' when creating the ndarray
+  arr\_value = np.array(value)
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{93}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+  round           Input                    Weight   v Desired lr(d(n)-o(n))  \textbackslash{}
+1     1    [1, 1, 0, 1]  [1.00, 1.00, 1.00, 1.00]   3       1          -0.2
+2     1    [1, 1, 1, 0]  [1.00, 1.00, 1.00, 1.00]   3       1          -0.2
+3     1  [1, 0, -1, -1]  [1.00, 1.00, 1.00, 1.00]  -1       1           0.2
+4     1   [1, 0, 1, -1]  [1.00, 1.00, 1.00, 1.00]   1       0          -0.1
+5     1   [1, -1, 0, 0]  [1.00, 1.00, 1.00, 1.00]   0       0           0.0
+6     1  [1, -1, -1, 0]  [1.00, 1.00, 1.00, 1.00]  -1       0           0.1
+
+                       Delta Wi                       Delta W         E  \textbackslash{}
+1  [-0.20, -0.20, -0.00, -0.20]   [-0.20, -0.20, 0.00, -0.20]       NaN
+2  [-0.20, -0.20, -0.20, -0.00]  [-0.40, -0.40, -0.20, -0.20]       NaN
+3    [0.20, 0.00, -0.20, -0.20]  [-0.20, -0.40, -0.40, -0.40]       NaN
+4   [-0.10, -0.00, -0.10, 0.10]  [-0.30, -0.40, -0.50, -0.30]       NaN
+5     [0.00, -0.00, 0.00, 0.00]  [-0.30, -0.40, -0.50, -0.30]       NaN
+6    [0.10, -0.10, -0.10, 0.00]  [-0.20, -0.50, -0.60, -0.30]  2.333333
+
+                 W(k+1)
+1                   NaN
+2                   NaN
+3                   NaN
+4                   NaN
+5                   NaN
+6  [0.8, 0.5, 0.4, 0.7]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{figure}
+\centering
+\includegraphics{attachment:image.png}
+\caption{image.png}
+\end{figure}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{85}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{delta\PYZus{}question\PYZus{}5}\PY{p}{(}\PY{n}{labels}\PY{p}{,} \PY{n}{num\PYZus{}iter}\PY{p}{,} \PY{n}{learning\PYZus{}rate}\PY{p}{,} \PY{n}{w}\PY{p}{)}\PY{p}{:}
+    \PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+                   \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}
+                   \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}
+                    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+    \PY{n}{features} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{values}
+    \PY{n}{cols} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Round}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Input}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Weight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{O}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lr(d\PYZhy{}O)Xi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{New Weight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+    \PY{n}{results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{columns} \PY{o}{=} \PY{n}{cols}\PY{p}{)}
+    \PY{n}{j} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{error} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{k}{for} \PY{n+nb}{round} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{num\PYZus{}iter}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{features}\PY{p}{)}\PY{p}{:}
+            \PY{n}{x} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+            \PY{n}{v}\PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{w}\PY{p}{,} \PY{n}{x}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{}==\PYZgt{}O}
+            \PY{n}{current\PYZus{}delta} \PY{o}{=} \PY{n}{learning\PYZus{}rate} \PY{o}{*} \PY{p}{(}\PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{v}\PY{p}{)} \PY{o}{*} \PY{n}{x} \PY{c+c1}{\PYZsh{}lr*(d\PYZhy{}o)x}
+            \PY{n}{error} \PY{o}{=} \PY{n}{error} \PY{o}{+} \PY{p}{(}\PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{v}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}
+            \PY{n}{w\PYZus{}} \PY{o}{=} \PY{n}{w}
+            \PY{n}{w} \PY{o}{=} \PY{n}{w} \PY{o}{+} \PY{n}{current\PYZus{}delta}
+            \PY{n}{j}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
+            \PY{n}{cols} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Round}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Input}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Weight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{O}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lr(d\PYZhy{}O)Xi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{New Weight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+            \PY{n}{results}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{j}\PY{p}{,}\PY{n}{cols}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{n+nb}{round}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{,}
+                                        \PY{n}{x}\PY{p}{,} 
+                                        \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}2.1f}\PY{l+s+s2}{\PYZdq{}}\PY{o}{\PYZpc{}}\PY{k}{k} for k in w\PYZus{} ]), 
+                                        \PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} 
+                                        \PY{n}{v}\PY{p}{,} 
+                                        \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}2.1f}\PY{l+s+s2}{\PYZdq{}}\PY{o}{\PYZpc{}}\PY{k}{k} for k in current\PYZus{}delta ], 
+                                        \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}.1f}\PY{l+s+s2}{\PYZdq{}}\PY{o}{\PYZpc{}}\PY{k}{k} for k in w ]]
+            
+            \PY{k}{if} \PY{p}{(}\PY{n}{j}\PY{o}{\PYZpc{}}\PY{k}{len}(features)==0):
+                 \PY{n}{results}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{j}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{error}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{features}\PY{p}{)}
+            
+    \PY{k}{return} \PY{n}{results}
+\PY{n}{delta\PYZus{}question\PYZus{}5}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{y}\PY{o}{.}\PY{n}{values}\PY{p}{,} \PY{n}{num\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{learning\PYZus{}rate}\PY{o}{=}\PY{l+m+mf}{0.1}\PY{p}{,} \PY{n}{w} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+c:\textbackslash{}users\textbackslash{}a\_mah\textbackslash{}pycharmprojects\textbackslash{}amahmoo6\_assignment\_1\_cap5615\textbackslash{}venv\textbackslash{}lib\textbackslash{}site-
+packages\textbackslash{}pandas\textbackslash{}core\textbackslash{}internals\textbackslash{}blocks.py:993: VisibleDeprecationWarning:
+Creating an ndarray from ragged nested sequences (which is a list-or-tuple of
+lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If
+you meant to do this, you must specify 'dtype=object' when creating the ndarray
+  arr\_value = np.array(value)
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{85}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+  Round          Input                Weight  d      O  \textbackslash{}
+1     1   [1, 1, 0, 1]  [1.0, 1.0, 1.0, 1.0]  1      3
+2     1   [1, 1, 1, 0]  [0.8, 0.8, 1.0, 0.8]  1    2.6
+3     1  [1, 0, 1, -1]  [0.6, 0.6, 0.8, 0.8]  0   0.68
+4     1  [1, -1, 0, 0]  [0.6, 0.6, 0.8, 0.9]  0 -0.068
+
+                  lr(d-O)Xi            New Weight     Error
+1  [-0.2, -0.2, -0.0, -0.2]  [0.8, 0.8, 1.0, 0.8]       NaN
+2  [-0.2, -0.2, -0.2, -0.0]  [0.6, 0.6, 0.8, 0.8]       NaN
+3   [-0.1, -0.0, -0.1, 0.1]  [0.6, 0.6, 0.8, 0.9]       NaN
+4     [0.0, -0.0, 0.0, 0.0]  [0.6, 0.6, 0.8, 0.9]  1.756756
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{figure}
+\centering
+\includegraphics{attachment:image.png}
+\caption{image.png}
+\end{figure}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{88}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{question6\PYZus{}rbf}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{requirement\PYZus{}inst} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}
+        \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} 
+          \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+         \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,}\PY{p}{\PYZcb{}}
+    \PY{p}{)}
+    \PY{n}{t1} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+    \PY{n}{t2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+    \PY{n}{display}\PY{p}{(}\PY{n}{requirement\PYZus{}inst}\PY{p}{)}
+    \PY{n}{sq} \PY{o}{=} \PY{k}{lambda} \PY{n}{x1}\PY{p}{,} \PY{n}{x2}\PY{p}{,}\PY{n}{x3}\PY{p}{,} \PY{n}{t}\PY{p}{:} \PY{n}{norm}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{n}{x1}\PY{p}{,} \PY{n}{x2}\PY{p}{,} \PY{n}{x3}\PY{p}{]}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{t}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}
+    \PY{n}{data\PYZus{}frame\PYZus{}instance} \PY{o}{=} \PY{n}{requirement\PYZus{}inst}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{p}{:}\PY{p}{]}
+    \PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{sq}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}\PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{t1}\PY{p}{)}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{sq}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}\PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{A3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{t2}\PY{p}{)}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{display}\PY{p}{(}\PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{p}{)}
+    \PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Verify}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{l+m+mi}{1} \PY{o}{+} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{o}{*}\PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{+}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{x}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{display}\PY{p}{(}\PY{n}{data\PYZus{}frame\PYZus{}instance}\PY{p}{)}
+\PY{n}{question6\PYZus{}rbf}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+   A1  A2  A3
+0  -1   1   2
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+   A1  A2  A3    z1   z2
+0  -1   1   2  14.0  8.0
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+   A1  A2  A3    z1   z2  Verify
+0  -1   1   2  14.0  8.0     3.0
+    \end{Verbatim}
+
+    
+    \begin{figure}
+\centering
+\includegraphics{attachment:image.png}
+\caption{image.png}
+\end{figure}
+
+    Calculation of Oa, Ob, Oc for the instance given I1
+
+Oa(I1) = \$ \Phi \$ (1.0+1.0+0.5) =1/(1+e\^{}-1*2.5) = 0.9241
+
+Ob(I1) = \$ \Phi \$(1.0+1.0+0.5) = 1/(1+e\^{}-1*2.5)=0.9241
+
+now for Oc
+
+Oc(I1) = \$ \Phi \$(0.5+0.5Oa(I1) +0.5Ob(I1) =0.62036
+
+what is the mean squared error of the network over the instance given I1
+
+I1: o.5(da-Oa)2=0.5(0.62036)2=0.19242
+
+The total squared error E(W)= 0.1924
+
+Mean Squared Error E(W)/Total number of instance
+
+= 0.19242/1
+
+MSE E(W)/1 = 0.19242 I, instance used is fed to the network to update
+the weight
+
+Calculate local gradient of each node
+
+\(\delta_c\) = Oc(1 -- Oc) * (dc -- Oc)
+
+\(\delta_b\) = Ob(1 -- Ob) * (Wbc * c)
+
+\(\delta_a\) = Oa(1 -- Oa) * (Wac * c)
+
+\(\delta_c\) = 0.62036(1-0.62036)*(0-0.62036) = -0.1461
+
+\(\delta_b\) = 0.9241(1-0.9241)\emph{(0.5}-0.1461) =0.005123
+
+\(\delta_a\) =0.9241(1-0.9241)\emph{(0.5}-0.1461) =0.005123
+
+\(\Delta\)
+
+Update the network weight using backpropagation rule
+
+\(\Delta\) Wc={[}\(\Delta\)WOc, \(\Delta\) Wac, \(\Delta\) Wbc{]}=E*
+\(\Delta\) j*Xij=-0.07305
+
+WOc 0.5 + -0.07305 = -0.42695
+
+Wac 0.5 + -0.07305 = -0.42695
+
+Wbc 0.5 + -0.07305 = -0.42695
+
+For B \(\Delta\) W=E\emph{\(\Delta\) j}Xij= 0.0025615\\
+Wob 1 + 0.0025615 = 0.0025615
+
+W1b 1 + 0.0025615 = 0.0025615
+
+W2b 1 + 0.0025615 = 0.0025615
+
+For A \(\Delta\) W=E\emph{\(\Delta\)j}Xij= 0.0025615
+
+Woa 0.5 + 0.0025615 = 0.502515
+
+W1a 0.5 + 0.0025615 = 0.502515
+
+W2a 05 + 0.0025615 = 0.502515
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
