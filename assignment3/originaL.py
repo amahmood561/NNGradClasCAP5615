@@ -10,7 +10,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from math import log2
 from math import log2
 
-review = pd.read_csv("../review100.csv")
+review = pd.read_csv("../final/review100.csv")
 
 def clean_row(row):
     row = row.lower()
